@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table("m_event")
+@Table(name = "m_event")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
