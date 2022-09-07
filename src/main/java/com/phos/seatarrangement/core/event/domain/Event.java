@@ -21,4 +21,18 @@ public class Event {
     private String address;
     private LocalDate date;
 
+    @Column(unique = true)
+    private String requestId;
+
+    private Event(String name, String address, LocalDate date, String requestId) {
+        this.name = name;
+        this.address = address;
+        this.date = date;
+        this.requestId = requestId;
+    }
+
+    public static Event build(final String name, final String address, final LocalDate date, final String requestId){
+        return new Event(name, address, date, requestId);
+    }
+
 }
