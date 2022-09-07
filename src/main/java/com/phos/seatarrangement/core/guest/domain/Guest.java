@@ -1,5 +1,6 @@
 package com.phos.seatarrangement.core.guest.domain;
 
+import com.phos.seatarrangement.core.event.domain.Event;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,10 @@ public class Guest {
 
     private String firstName;
     private String lastName;
-    private String table;
+    private String tableNumber;
+
+    @OneToOne
+    private Event event;
 
 
 }
