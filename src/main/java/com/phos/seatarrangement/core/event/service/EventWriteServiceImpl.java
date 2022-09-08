@@ -3,6 +3,7 @@ package com.phos.seatarrangement.core.event.service;
 import com.phos.seatarrangement.core.event.data.EventDTO;
 import com.phos.seatarrangement.core.event.data.EventResponseDTO;
 import com.phos.seatarrangement.core.event.domain.Event;
+import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -62,5 +63,27 @@ public class EventWriteServiceImpl implements EventWriteService{
 
     private String getRandomString() {
         return RandomStringUtils.random(15, true, true);
+    }
+
+    @Override
+    public ResponseEntity<EventResponseDTO> update(EventDTO data, String requestId) {
+        try{
+
+            Event event = eventRepository.findByRequestId(requestId);
+            return getEventResponse(null);
+        }catch (Exception ex){
+            throw new EventNotFoundException("error.msg.event.not.updated"
+                    ,String.format("The %s event could not be updated...", data.getName()));
+        }
+    }
+
+    @Override
+    public ResponseEntity<EventResponseDTO> delete(EventDTO data) {
+        try{
+            return getEventResponse(null);
+        }catch (Exception ex){
+            throw new EventNotFoundException("error.msg.event.not.deleted"
+                    ,String.format("The %s event could not be deleted...", data.getName()));
+        }
     }
 }

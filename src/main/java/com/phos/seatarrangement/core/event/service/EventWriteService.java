@@ -7,4 +7,8 @@ import org.springframework.http.ResponseEntity;
 public interface EventWriteService {
 
     ResponseEntity<EventResponseDTO> create(EventDTO data);
+
+    ResponseEntity<EventResponseDTO> update(EventDTO data, String requestId);
+
+    ResponseEntity<EventResponseDTO> delete(EventDTO data);
 }
