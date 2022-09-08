@@ -4,16 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventDTO {
+public class EventResponseData {
 
-    private String name;
-    private LocalDate date;
-    private String address;
-
-
+    private String requestId;
+    private Long eventId;
 }

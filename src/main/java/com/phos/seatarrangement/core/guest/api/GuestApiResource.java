@@ -1,6 +1,6 @@
 package com.phos.seatarrangement.core.guest.api;
 
-import com.phos.seatarrangement.core.event.data.EventDTO;
+import com.phos.seatarrangement.core.event.data.EventData;
 import com.phos.seatarrangement.core.guest.service.GuestReadService;
 import com.phos.seatarrangement.core.guest.service.GuestWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class GuestApiResource {
     }
 
     @PostMapping("")
-    public ResponseEntity create(@RequestBody EventDTO eventData){
+    public ResponseEntity create(@RequestBody EventData eventData){
 
         return ResponseEntity.ok()
                 .body(Map.of("status", "success"));

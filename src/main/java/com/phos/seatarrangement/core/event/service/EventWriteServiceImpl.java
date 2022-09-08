@@ -1,7 +1,7 @@
 package com.phos.seatarrangement.core.event.service;
 
-import com.phos.seatarrangement.core.event.data.EventDTO;
-import com.phos.seatarrangement.core.event.data.EventResponseDTO;
+import com.phos.seatarrangement.core.event.data.EventData;
+import com.phos.seatarrangement.core.event.data.EventResponseData;
 import com.phos.seatarrangement.core.event.domain.Event;
 import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public class EventWriteServiceImpl implements EventWriteService{
     }
 
     @Override
-    public ResponseEntity<EventResponseDTO> create(EventDTO data) {
+    public ResponseEntity<EventResponseData> create(EventData data) {
         try{
             String requestId = getRandomString();
             String name = data.getName();
@@ -60,12 +59,12 @@ public class EventWriteServiceImpl implements EventWriteService{
 
     }
 
-    private ResponseEntity<EventResponseDTO> getEventResponse(Event event) {
+    private ResponseEntity<EventResponseData> getEventResponse(Event event) {
         Long eventId = event.getId();
         String requestId = event.getRequestId();
 
         return ResponseEntity.ok()
-                .body(new EventResponseDTO(requestId,eventId));
+                .body(new EventResponseData(requestId,eventId));
     }
 
     private String getRandomString() {
@@ -73,7 +72,7 @@ public class EventWriteServiceImpl implements EventWriteService{
     }
 
     @Override
-    public ResponseEntity<EventResponseDTO> update(EventDTO data, String requestId) {
+    public ResponseEntity<EventResponseData> update(EventData data, String requestId) {
         try{
 
             Event event = eventRepository.findByRequestId(requestId);
@@ -101,7 +100,7 @@ public class EventWriteServiceImpl implements EventWriteService{
     }
 
     @Override
-    public ResponseEntity<EventResponseDTO> deleteEvent(String requestId) {
+    public ResponseEntity<EventResponseData> deleteEvent(String requestId) {
         Event event = delete(requestId);
         return getEventResponse(event);
     }
