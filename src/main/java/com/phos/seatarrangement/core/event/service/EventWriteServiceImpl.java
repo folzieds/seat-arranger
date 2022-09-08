@@ -15,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class EventWriteServiceImpl implements EventWriteService{
@@ -82,7 +85,12 @@ public class EventWriteServiceImpl implements EventWriteService{
     }
 
     @Override
-    public ResponseEntity<EventResponseDTO> delete(String requestId) {
+    public ResponseEntity<EventResponseDTO> deleteEvent(String requestId) {
+        Event event = delete(requestId);
+        return getEventResponse(event);
+    }
+
+    private Event delete(String requestId){
         try{
 
             Event event = eventRepository.findByRequestId(requestId);
@@ -97,10 +105,20 @@ public class EventWriteServiceImpl implements EventWriteService{
             eventRepository.delete(event);
             logger.info("Event with request id {} has been deleted", requestId);
 
-            return getEventResponse(event);
+            return event;
         }catch (Exception ex){
             throw new EventNotFoundException("error.msg.event.not.deleted"
                     ,String.format("The event with id %s could not be deleted...", requestId));
         }
+    }
+
+    @Override
+    public ResponseEntity deleteAll(List<String> requestIds) {
+        for (String requestId :
+                requestIds) {
+            delete(requestId);
+        }
+        return ResponseEntity.ok()
+                .body(Map.of("status", "Success"));
     }
 }
