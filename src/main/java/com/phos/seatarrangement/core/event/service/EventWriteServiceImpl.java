@@ -77,10 +77,26 @@ public class EventWriteServiceImpl implements EventWriteService{
         try{
 
             Event event = eventRepository.findByRequestId(requestId);
-            return getEventResponse(null);
+            if(event == null){
+                throw new EventNotFoundException("error.msg.event.not.found",
+                        "The event was not found");
+            }
+
+            if( data != null  && !data.getName().equals(event.getName())){
+                event.setName(data.getName());
+            }
+            if( data != null  && !data.getAddress().equals(event.getAddress())){
+                event.setAddress(data.getAddress());
+            }
+            if( data != null  && data.getDate() != event.getDate()){
+                event.setDate(data.getDate());
+            }
+
+            eventRepository.save(event);
+            return getEventResponse(event);
         }catch (Exception ex){
             throw new EventNotFoundException("error.msg.event.not.updated"
-                    ,String.format("The %s event could not be updated...", data.getName()));
+                    ,String.format("The event with request id {} could not be updated...", requestId));
         }
     }
 
