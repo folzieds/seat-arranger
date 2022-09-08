@@ -6,6 +6,7 @@ import com.phos.seatarrangement.core.event.domain.Event;
 import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
+import com.phos.seatarrangement.core.guest.GuestRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,12 @@ public class EventWriteServiceImpl implements EventWriteService{
 
     private final EventRepository eventRepository;
 
+    private final GuestRepository guestRepository;
+
     @Autowired
-    public EventWriteServiceImpl(EventRepository eventRepository) {
+    public EventWriteServiceImpl(EventRepository eventRepository, GuestRepository guestRepository) {
         this.eventRepository = eventRepository;
+        this.guestRepository = guestRepository;
     }
 
     @Override
@@ -78,12 +82,25 @@ public class EventWriteServiceImpl implements EventWriteService{
     }
 
     @Override
-    public ResponseEntity<EventResponseDTO> delete(EventDTO data) {
+    public ResponseEntity<EventResponseDTO> delete(String requestId) {
         try{
-            return getEventResponse(null);
+
+            Event event = eventRepository.findByRequestId(requestId);
+            if(event == null){
+                throw new EventNotFoundException("error.msg.event.not.deleted"
+                        ,String.format("The event with id %s could not be deleted...", requestId));
+            }
+
+            logger.info("Deleting all guests associated with event -> {}", requestId);
+            guestRepository.deleteAllByEventId(event.getId());
+
+            eventRepository.delete(event);
+            logger.info("Event with request id {} has been deleted", requestId);
+
+            return getEventResponse(event);
         }catch (Exception ex){
             throw new EventNotFoundException("error.msg.event.not.deleted"
-                    ,String.format("The %s event could not be deleted...", data.getName()));
+                    ,String.format("The event with id %s could not be deleted...", requestId));
         }
     }
 }

@@ -10,5 +10,5 @@ public interface EventWriteService {
 
     ResponseEntity<EventResponseDTO> update(EventDTO data, String requestId);
 
-    ResponseEntity<EventResponseDTO> delete(EventDTO data);
+    ResponseEntity<EventResponseDTO> delete(String requestId);
 }
