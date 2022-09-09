@@ -37,6 +37,7 @@ public class EventWriteServiceImpl implements EventWriteService{
     @Override
     public ResponseEntity<EventResponseData> create(EventData data) {
         try{
+            validateData(data);
             String eventCode = getRandomString();
             String name = data.getName();
             String address = data.getAddress();
@@ -75,7 +76,7 @@ public class EventWriteServiceImpl implements EventWriteService{
     @Override
     public ResponseEntity<EventResponseData> update(EventData data, Long eventId) {
         try{
-
+            validateData(data);
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
 
 
@@ -102,6 +103,10 @@ public class EventWriteServiceImpl implements EventWriteService{
             throw new EventNotFoundException("error.msg.event.not.updated"
                     ,String.format("The event with event id %d could not be updated...", eventId));
         }
+    }
+
+    private void validateData(EventData data) {
+
     }
 
     @Override

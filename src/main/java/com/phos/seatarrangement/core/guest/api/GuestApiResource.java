@@ -46,9 +46,10 @@ public class GuestApiResource {
 
     @PutMapping("{guestId}")
     public ResponseEntity update(@PathVariable("eventCode") String eventCode,
-                                 @PathVariable("guestId") Long guestId){
+                                 @PathVariable("guestId") Long guestId,
+                                 @RequestBody GuestData data){
 
-        return guestWriteService.update(eventCode, guestId);
+        return guestWriteService.update(eventCode, guestId, data);
     }
 
     @DeleteMapping("{guestId}")

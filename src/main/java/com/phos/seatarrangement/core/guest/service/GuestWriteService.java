@@ -12,7 +12,7 @@ public interface GuestWriteService {
 
     ResponseEntity<Map<String, Object>> deleteOne(String eventCode, Long guestId);
 
-    ResponseEntity<Map<String, Object>> update(String eventCode, Long guestId);
+    ResponseEntity<Map<String, Object>> update(String eventCode, Long guestId, GuestData data);
 
     ResponseEntity<Map<String, Object>> deleteSelected(String eventCode, List<Long> guestIds);
 

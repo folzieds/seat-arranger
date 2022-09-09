@@ -1,7 +1,6 @@
 package com.phos.seatarrangement.core.guest.service;
 
 import com.phos.seatarrangement.core.event.domain.Event;
-import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
 import com.phos.seatarrangement.core.guest.data.GuestData;
@@ -23,18 +22,20 @@ public class GuestWriteServiceImpl implements GuestWriteService{
     Logger logger = LoggerFactory.getLogger(GuestWriteServiceImpl.class);
 
     private final GuestRepository guestRepository;
-
     private final EventRepository eventRepository;
+    private final GuestReadService guestReadService;
 
     @Autowired
-    public GuestWriteServiceImpl(GuestRepository guestRepository, EventRepository eventRepository) {
+    public GuestWriteServiceImpl(GuestRepository guestRepository, EventRepository eventRepository, GuestReadService guestReadService) {
         this.guestRepository = guestRepository;
         this.eventRepository = eventRepository;
+        this.guestReadService = guestReadService;
     }
 
     @Override
     public ResponseEntity<Map<String, Object>> create(String eventCode, GuestData guestData) {
         try{
+            validateData(guestData);
             logger.info("Fetching event with code {}", eventCode);
             Event event = eventRepository.findByEventCode(eventCode);
 
@@ -53,6 +54,9 @@ public class GuestWriteServiceImpl implements GuestWriteService{
         }
     }
 
+    private void validateData(GuestData guestData) {
+    }
+
     @Override
     public ResponseEntity<Map<String, Object>> deleteOne(String eventCode, Long guestId) {
         delete(eventCode, guestId);
@@ -61,8 +65,25 @@ public class GuestWriteServiceImpl implements GuestWriteService{
     }
 
     @Override
-    public ResponseEntity<Map<String, Object>> update(String eventCode, Long guestId) {
-        return null;
+    public ResponseEntity<Map<String, Object>> update(String eventCode, Long guestId, GuestData data) {
+        try{
+            validateData(data);
+            Guest guest = guestReadService.retrieveOne(guestId, eventCode);
+            if( data != null  && !data.getFirstName().equals(guest.getFirstName())){
+                guest.setFirstName(data.getFirstName());
+            }
+            if( data != null  && !data.getLastName().equals(guest.getLastName())){
+                guest.setLastName(data.getLastName());
+            }
+            if( data != null  && data.getTableNumber() != guest.getTableNumber()){
+                guest.setTableNumber(data.getTableNumber());
+            }
+            guestRepository.save(guest);
+            return getGuestResponse(guestId, eventCode);
+        }catch(Exception ex){
+            throw new PlatformDataIntegrityException("error.msg.guest.update",
+                    String.format("Guest with id %d could not be updated", guestId));
+        }
     }
 
     @Override
@@ -77,16 +98,7 @@ public class GuestWriteServiceImpl implements GuestWriteService{
 
     private void delete(String eventCode, Long guestId){
         try{
-            logger.info("Fetching event with code {}", eventCode);
-            Event event = eventRepository.findByEventCode(eventCode);
-
-            if(event == null){
-                throw new EventNotFoundException("error.msg.event.not.found",
-                        String.format("The event with code %s was not found", eventCode));
-            }
-
-            Long eventId = event.getId();
-            Guest guest = guestRepository.findByIdAndEventId(guestId, eventId);
+            Guest guest = guestReadService.retrieveOne(guestId, eventCode);
             guestRepository.delete(guest);
 
             logger.info("Guest with id {} has been successfully deleted", guestId);
