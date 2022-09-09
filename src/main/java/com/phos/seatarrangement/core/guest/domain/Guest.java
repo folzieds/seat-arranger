@@ -25,5 +25,16 @@ public class Guest {
     @OneToOne
     private Event event;
 
+    private Guest(String firstName, String lastName, String tableNumber, Event event){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.tableNumber = tableNumber;
+        this.event = event;
+    }
+
+    public static Guest build(String firstName, String lastName, String tableNumber, Event event){
+        return new Guest(firstName,lastName,tableNumber, event);
+    }
+
 
 }

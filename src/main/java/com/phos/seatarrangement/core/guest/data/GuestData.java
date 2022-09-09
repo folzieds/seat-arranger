@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GuestDTO {
+public class GuestData {
 
     private String firstName;
     private String lastName;
-    private String table;
+    private String tableNumber;
 }

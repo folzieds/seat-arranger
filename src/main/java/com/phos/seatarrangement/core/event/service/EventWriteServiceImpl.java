@@ -37,12 +37,12 @@ public class EventWriteServiceImpl implements EventWriteService{
     @Override
     public ResponseEntity<EventResponseData> create(EventData data) {
         try{
-            String requestId = getRandomString();
+            String eventCode = getRandomString();
             String name = data.getName();
             String address = data.getAddress();
             LocalDate date = data.getDate();
 
-            Event event =  eventRepository.save(Event.build(name, address, date, requestId));
+            Event event =  eventRepository.save(Event.build(name, address, date, eventCode));
 
             logger.info("{} event has been created", name);
             return getEventResponse(event);
@@ -62,10 +62,10 @@ public class EventWriteServiceImpl implements EventWriteService{
 
     private ResponseEntity<EventResponseData> getEventResponse(Event event) {
         Long eventId = event.getId();
-        String requestId = event.getRequestId();
+        String eventCode = event.getEventCode();
 
         return ResponseEntity.ok()
-                .body(new EventResponseData(requestId,eventId));
+                .body(new EventResponseData(eventCode,eventId));
     }
 
     private String getRandomString() {

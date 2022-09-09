@@ -1,4 +1,4 @@
-package com.phos.seatarrangement.core.guest;
+package com.phos.seatarrangement.core.guest.repository;
 
 import com.phos.seatarrangement.core.guest.domain.Guest;
 import org.springframework.data.jpa.repository.JpaRepository;

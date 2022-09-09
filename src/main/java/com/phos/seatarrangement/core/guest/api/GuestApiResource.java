@@ -1,6 +1,7 @@
 package com.phos.seatarrangement.core.guest.api;
 
 import com.phos.seatarrangement.core.event.data.EventData;
+import com.phos.seatarrangement.core.guest.data.GuestData;
 import com.phos.seatarrangement.core.guest.service.GuestReadService;
 import com.phos.seatarrangement.core.guest.service.GuestWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("guest")
+@RequestMapping("event/{eventCode}/guest")
 public class GuestApiResource {
 
     private final GuestReadService guestReadService;
@@ -23,35 +24,36 @@ public class GuestApiResource {
     }
 
     @PostMapping("")
-    public ResponseEntity create(@RequestBody EventData eventData){
-
-        return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+    public ResponseEntity create(@PathVariable("eventCode") String eventCode,@RequestBody GuestData guestData){
+        return guestWriteService.create(eventCode, guestData);
     }
 
     @GetMapping("")
-    public ResponseEntity retrieveAll(){
+    public ResponseEntity retrieveAll(@PathVariable("eventCode") String eventCode){
 
         return ResponseEntity.ok()
                 .body(Map.of("status", "success"));
     }
 
     @GetMapping("{guestId}")
-    public ResponseEntity retrieve(@PathVariable("guestId") Long eventId){
+    public ResponseEntity retrieve(@PathVariable("eventCode") String eventCode,
+                                   @PathVariable("guestId") Long guestId){
 
         return ResponseEntity.ok()
                 .body(Map.of("status", "success"));
     }
 
     @PutMapping("{guestId}")
-    public ResponseEntity update(@PathVariable("guestId") Long eventId){
+    public ResponseEntity update(@PathVariable("eventId") String eventCode,
+                                 @PathVariable("guestId") Long guestId){
 
         return ResponseEntity.ok()
                 .body(Map.of("status", "success"));
     }
 
     @DeleteMapping("{guestId}")
-    public ResponseEntity delete(@PathVariable("guestId") Long eventId){
+    public ResponseEntity delete(@PathVariable("eventCode") String eventCode,
+                                 @PathVariable("guestId") Long guestId){
 
         return ResponseEntity.ok()
                 .body(Map.of("status", "success"));

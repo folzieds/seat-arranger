@@ -22,17 +22,17 @@ public class Event {
     private LocalDate date;
 
     @Column(unique = true)
-    private String requestId;
+    private String eventCode;
 
-    private Event(String name, String address, LocalDate date, String requestId) {
+    private Event(String name, String address, LocalDate date, String eventCode) {
         this.name = name;
         this.address = address;
         this.date = date;
-        this.requestId = requestId;
+        this.eventCode = eventCode;
     }
 
-    public static Event build(final String name, final String address, final LocalDate date, final String requestId){
-        return new Event(name, address, date, requestId);
+    public static Event build(final String name, final String address, final LocalDate date, final String eventCode){
+        return new Event(name, address, date, eventCode);
     }
 
 }
