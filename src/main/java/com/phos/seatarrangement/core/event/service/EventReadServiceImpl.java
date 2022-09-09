@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,15 +26,15 @@ public class EventReadServiceImpl implements EventReadService{
     }
 
     @Override
-    public ResponseEntity<Map<String, Object>> getEvent(String requestId) {
+    public ResponseEntity<Map<String, Object>> getEvent(Long eventId) {
         try{
-            logger.info("Fetching event with request id {}", requestId);
-            Event event = eventRepository.findByRequestId(requestId);
+            logger.info("Fetching event with request id {}", eventId);
+            Optional<Event> event = eventRepository.findById(eventId);
 
             return ResponseEntity.ok()
-                    .body(Map.of("status", "success", "data", mapObjectToData(event)));
+                    .body(Map.of("status", "success", "data", mapObjectToData(event.get())));
         }catch (Exception ex){
-            logger.error("Event with request id {} was not found...", requestId);
+            logger.error("Event with event id {} was not found...", eventId);
             throw new EventNotFoundException("error.msg.event.not.found",
                     "The event was not found");
         }

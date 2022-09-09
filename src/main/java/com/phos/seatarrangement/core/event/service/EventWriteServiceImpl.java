@@ -6,7 +6,7 @@ import com.phos.seatarrangement.core.event.domain.Event;
 import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
-import com.phos.seatarrangement.core.guest.GuestRepository;
+import com.phos.seatarrangement.core.guest.repository.GuestRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class EventWriteServiceImpl implements EventWriteService{
@@ -72,14 +73,17 @@ public class EventWriteServiceImpl implements EventWriteService{
     }
 
     @Override
-    public ResponseEntity<EventResponseData> update(EventData data, String requestId) {
+    public ResponseEntity<EventResponseData> update(EventData data, Long eventId) {
         try{
 
-            Event event = eventRepository.findByRequestId(requestId);
-            if(event == null){
+            Optional<Event> optionalEvent = eventRepository.findById(eventId);
+
+
+            if(!optionalEvent.isEmpty()){
                 throw new EventNotFoundException("error.msg.event.not.found",
                         "The event was not found");
             }
+            Event event = optionalEvent.get();
 
             if( data != null  && !data.getName().equals(event.getName())){
                 event.setName(data.getName());
@@ -94,44 +98,56 @@ public class EventWriteServiceImpl implements EventWriteService{
             eventRepository.save(event);
             return getEventResponse(event);
         }catch (Exception ex){
+            logger.error("An error occurred while updating event...");
             throw new EventNotFoundException("error.msg.event.not.updated"
-                    ,String.format("The event with request id {} could not be updated...", requestId));
+                    ,String.format("The event with event id %d could not be updated...", eventId));
         }
     }
 
     @Override
-    public ResponseEntity<EventResponseData> deleteEvent(String requestId) {
-        Event event = delete(requestId);
+    public ResponseEntity<EventResponseData> deleteEvent(Long eventId) {
+        Event event = delete(eventId);
         return getEventResponse(event);
     }
 
-    private Event delete(String requestId){
+    @Override
+    public ResponseEntity deleteAll() {
+        // refactor when you add users
+        eventRepository.deleteAll();
+        return ResponseEntity.ok()
+                .body(Map.of("status", "Success"));
+    }
+
+    private Event delete(Long eventId){
         try{
 
-            Event event = eventRepository.findByRequestId(requestId);
-            if(event == null){
-                throw new EventNotFoundException("error.msg.event.not.deleted"
-                        ,String.format("The event with id %s could not be deleted...", requestId));
-            }
+            Optional<Event> optionalEvent = eventRepository.findById(eventId);
 
-            logger.info("Deleting all guests associated with event -> {}", requestId);
+            if(!optionalEvent.isEmpty()){
+                throw new EventNotFoundException("error.msg.event.not.deleted"
+                        ,String.format("The event with id %d could not be deleted...", eventId));
+            }
+            Event event = optionalEvent.get();
+
+            logger.info("Deleting all guests associated with event -> {}", eventId);
             guestRepository.deleteAllByEventId(event.getId());
 
             eventRepository.delete(event);
-            logger.info("Event with request id {} has been deleted", requestId);
+            logger.info("Event with id {} has been deleted", eventId);
 
             return event;
         }catch (Exception ex){
+            logger.error("An error occurred while trying to delete event...");
             throw new EventNotFoundException("error.msg.event.not.deleted"
-                    ,String.format("The event with id %s could not be deleted...", requestId));
+                    ,String.format("The event with id %d could not be deleted...", eventId));
         }
     }
 
     @Override
-    public ResponseEntity deleteAll(List<String> requestIds) {
-        for (String requestId :
-                requestIds) {
-            delete(requestId);
+    public ResponseEntity deleteSelected(List<Long> eventIds) {
+        for (Long eventId :
+                eventIds) {
+            delete(eventId);
         }
         return ResponseEntity.ok()
                 .body(Map.of("status", "Success"));

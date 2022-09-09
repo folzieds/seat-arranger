@@ -25,35 +25,36 @@ public class EventApiResource {
     @PostMapping("")
     public ResponseEntity create(@RequestBody EventData eventData){
 
-        return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+        return eventWriteService.create(eventData);
     }
 
     @GetMapping("")
     public ResponseEntity retrieveAll(){
 
-        return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+        return eventReadService.getAllEvents();
     }
 
     @GetMapping("{eventId}")
     public ResponseEntity retrieve(@PathVariable("eventId") Long eventId){
 
-        return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+        return eventReadService.getEvent(eventId);
     }
 
     @PutMapping("{eventId}")
-    public ResponseEntity update(@PathVariable("eventId") Long eventId){
+    public ResponseEntity update(@PathVariable("eventId") Long eventId, @RequestBody EventData data){
 
-        return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+        return eventWriteService.update(data,eventId);
     }
 
     @DeleteMapping("{eventId}")
     public ResponseEntity delete(@PathVariable("eventId") Long eventId){
 
-        return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+        return eventWriteService.deleteEvent(eventId);
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity deleteAll(){
+
+        return eventWriteService.deleteAll();
     }
 }

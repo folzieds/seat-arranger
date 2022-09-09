@@ -10,9 +10,11 @@ public interface EventWriteService {
 
     ResponseEntity<EventResponseData> create(EventData data);
 
-    ResponseEntity<EventResponseData> update(EventData data, String requestId);
+    ResponseEntity<EventResponseData> update(EventData data, Long eventId);
 
-    ResponseEntity<EventResponseData> deleteEvent(String requestId);
+    ResponseEntity<EventResponseData> deleteEvent(Long eventId);
 
-    ResponseEntity deleteAll(List<String> requestIds);
+    ResponseEntity deleteAll();
+
+    ResponseEntity deleteSelected(List<Long> eventIds);
 }
