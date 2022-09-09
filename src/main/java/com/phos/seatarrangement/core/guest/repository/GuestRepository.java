@@ -10,4 +10,6 @@ public interface GuestRepository extends JpaRepository<Guest, Long>, JpaSpecific
 
     @Query(value = "delete from m_guest where event_id = :id", nativeQuery = true)
     void deleteAllByEventId(@Param("id") Long id);
+
+    Guest findByIdAndEventId(Long guestId, Long eventId);
 }

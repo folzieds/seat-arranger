@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -44,18 +45,29 @@ public class GuestApiResource {
     }
 
     @PutMapping("{guestId}")
-    public ResponseEntity update(@PathVariable("eventId") String eventCode,
+    public ResponseEntity update(@PathVariable("eventCode") String eventCode,
                                  @PathVariable("guestId") Long guestId){
 
-        return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+        return guestWriteService.update(eventCode, guestId);
     }
 
     @DeleteMapping("{guestId}")
     public ResponseEntity delete(@PathVariable("eventCode") String eventCode,
                                  @PathVariable("guestId") Long guestId){
 
-        return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+        return guestWriteService.deleteOne(eventCode, guestId);
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity deleteSelected(@PathVariable("eventCode") String eventCode,
+                                 @RequestBody List<Long> guestIds){
+
+        return guestWriteService.deleteSelected(eventCode, guestIds);
+    }
+
+    @DeleteMapping("all")
+    public ResponseEntity deleteSelected(@PathVariable("eventCode") String eventCode){
+
+        return guestWriteService.deleteAll(eventCode);
     }
 }

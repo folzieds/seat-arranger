@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GuestResponseData {
-    private String requestId;
+    private String eventCode;
     private Long guestId;
 }
