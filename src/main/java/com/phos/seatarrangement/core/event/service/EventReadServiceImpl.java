@@ -6,6 +6,7 @@ import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class EventReadServiceImpl implements EventReadService{
 
     private final Logger logger = LoggerFactory.getLogger(EventReadServiceImpl.class);
 
+    @Autowired
     public EventReadServiceImpl(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
     }
