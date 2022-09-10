@@ -2,6 +2,7 @@ package com.phos.seatarrangement.core.guest.api;
 
 import com.phos.seatarrangement.core.event.data.EventData;
 import com.phos.seatarrangement.core.guest.data.GuestData;
+import com.phos.seatarrangement.core.guest.domain.Guest;
 import com.phos.seatarrangement.core.guest.service.GuestReadService;
 import com.phos.seatarrangement.core.guest.service.GuestWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +32,22 @@ public class GuestApiResource {
 
     @GetMapping("")
     public ResponseEntity retrieveAll(@PathVariable("eventCode") String eventCode){
-
-        return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+        return guestReadService.retrieveAll(eventCode);
     }
 
     @GetMapping("{guestId}")
     public ResponseEntity retrieve(@PathVariable("eventCode") String eventCode,
                                    @PathVariable("guestId") Long guestId){
-
+        Guest guest = guestReadService.retrieveOne(guestId, eventCode);
         return ResponseEntity.ok()
-                .body(Map.of("status", "success"));
+                .body(Map.of("status", "success", "data", guest));
+    }
+
+    @GetMapping("search")
+    public ResponseEntity search(@PathVariable("eventCode") String eventCode,
+                                 @RequestParam("q") String q,
+                                 @RequestParam(value = "exactMatch", defaultValue = "false") Boolean exactMatch){
+        return guestReadService.search(eventCode, q, exactMatch);
     }
 
     @PutMapping("{guestId}")

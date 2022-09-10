@@ -9,7 +9,11 @@ import com.phos.seatarrangement.core.guest.repository.GuestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class GuestReadServiceImpl implements GuestReadService{
@@ -26,7 +30,7 @@ public class GuestReadServiceImpl implements GuestReadService{
     }
 
     @Override
-    protected Guest retrieveOne(Long guestId, String eventCode){
+    public Guest retrieveOne(Long guestId, String eventCode){
         try{
             logger.info("Fetching event with code {}", eventCode);
             Event event = eventRepository.findByEventCode(eventCode);
@@ -43,6 +47,33 @@ public class GuestReadServiceImpl implements GuestReadService{
         }catch(Exception ex){
             throw new PlatformDataIntegrityException("error.msg.guest.fetch.one",
                     "An error occurred while retrieving guest");
+        }
+    }
+
+    @Override
+    public ResponseEntity search(String eventCode, String q, Boolean exactMatch) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity retrieveAll(String eventCode) {
+        try{
+            logger.info("Fetching event with code {}", eventCode);
+            Event event = eventRepository.findByEventCode(eventCode);
+
+            if(event == null){
+                throw new EventNotFoundException("error.msg.event.not.found",
+                        String.format("The event with code %s was not found", eventCode));
+            }
+
+            Long eventId = event.getId();
+            List<Guest> guests = guestRepository.findAllByEventId(eventId);
+
+            return ResponseEntity.ok()
+                    .body(Map.of("status", "success", "data", guests));
+        }catch(Exception ex){
+            throw new PlatformDataIntegrityException("error.msg.guest.fetch.all",
+                    "An error occurred while retrieving guests");
         }
     }
 }
