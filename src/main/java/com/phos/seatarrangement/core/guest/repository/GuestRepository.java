@@ -16,4 +16,7 @@ public interface GuestRepository extends JpaRepository<Guest, Long>, JpaSpecific
     Guest findByIdAndEventId(Long guestId, Long eventId);
 
     List<Guest> findAllByEventId(Long eventId);
+
+    @Query(value = "select * from m_guest where event_id = :event_id and first_name like :q or last_name like :q", nativeQuery = true)
+    List<Guest> findAllByEventIdAndName(@Param("event_id") Long id, @Param("q") String q);
 }

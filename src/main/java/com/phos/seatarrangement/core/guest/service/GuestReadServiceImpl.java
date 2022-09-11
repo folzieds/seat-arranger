@@ -52,7 +52,23 @@ public class GuestReadServiceImpl implements GuestReadService{
 
     @Override
     public ResponseEntity search(String eventCode, String q, Boolean exactMatch) {
-        return null;
+        try{
+            Event event = eventRepository.findByEventCode(eventCode);
+            if(event == null){
+                throw new EventNotFoundException("error.msg.event.not.found",
+                        String.format("Event with code %s was not found", eventCode));
+            }
+            List<Guest> guests;
+            if (!exactMatch) {
+                q += "%";
+            }
+            guests = guestRepository.findAllByEventIdAndName(event.getId(), q);
+            return ResponseEntity.ok()
+                    .body(Map.of("status", "success", "data", guests));
+        }catch (Exception ex){
+            throw new PlatformDataIntegrityException("error.msg.search",
+                    String.format("An error occurred while searching for the string '%s'", q));
+        }
     }
 
     @Override
