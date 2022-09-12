@@ -38,7 +38,7 @@ public class GuestApiResource {
     @GetMapping("{guestId}")
     public ResponseEntity retrieve(@PathVariable("eventCode") String eventCode,
                                    @PathVariable("guestId") Long guestId){
-        Guest guest = guestReadService.retrieveOne(guestId, eventCode);
+        GuestData guest = guestReadService.retrieveOne(guestId, eventCode);
         return ResponseEntity.ok()
                 .body(Map.of("status", "success", "data", guest));
     }

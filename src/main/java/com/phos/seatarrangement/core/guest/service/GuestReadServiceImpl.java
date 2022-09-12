@@ -32,7 +32,7 @@ public class GuestReadServiceImpl implements GuestReadService{
     }
 
     @Override
-    public Guest retrieveOne(Long guestId, String eventCode){
+    public GuestData retrieveOne(Long guestId, String eventCode){
         try{
             logger.info("Fetching event with code {}", eventCode);
             Event event = eventRepository.findByEventCode(eventCode);
@@ -45,7 +45,7 @@ public class GuestReadServiceImpl implements GuestReadService{
             Long eventId = event.getId();
             Guest guest = guestRepository.findByIdAndEventId(guestId, eventId);
 
-            return guest;
+            return mapObjectToData(guest);
         }catch(Exception ex){
             throw new PlatformDataIntegrityException("error.msg.guest.fetch.one",
                     "An error occurred while retrieving guest");
