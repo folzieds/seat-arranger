@@ -14,4 +14,7 @@ public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecific
 
     @Query(value = "select * from m_event where name like :q", nativeQuery = true)
     List<Event> findAllByName(@Param("q") String q);
+
+    @Query(value = "select event_code from m_event", nativeQuery = true)
+    List<String> findAllCodes();
 }

@@ -38,7 +38,11 @@ public class EventWriteServiceImpl implements EventWriteService{
     public ResponseEntity<EventResponseData> create(EventData data) {
         try{
             validateData(data);
+            List<String> codes = eventRepository.findAllCodes();
             String eventCode = getRandomString();
+            while(!isUnique(eventCode, codes)){
+                eventCode = getRandomString();
+            }
             String name = data.getName();
             String address = data.getAddress();
             LocalDate date = data.getDate();
@@ -67,6 +71,10 @@ public class EventWriteServiceImpl implements EventWriteService{
 
         return ResponseEntity.ok()
                 .body(new EventResponseData(eventCode,eventId));
+    }
+
+    private Boolean isUnique(String code, List<String> codes){
+        return !codes.contains(code);
     }
 
     private String getRandomString() {
