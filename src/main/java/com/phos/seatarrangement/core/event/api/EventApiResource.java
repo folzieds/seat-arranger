@@ -34,6 +34,12 @@ public class EventApiResource {
         return eventReadService.getAllEvents();
     }
 
+    @GetMapping("search")
+    public ResponseEntity search(@RequestParam("q")String q, @RequestParam(value = "exactMatch", defaultValue = "false") Boolean exactMatch){
+
+        return eventReadService.search(q, exactMatch);
+    }
+
     @GetMapping("{eventId}")
     public ResponseEntity retrieve(@PathVariable("eventId") Long eventId){
 

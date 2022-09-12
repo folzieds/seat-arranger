@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -68,8 +69,13 @@ public class EventReadServiceImpl implements EventReadService{
                 q += "%";
             }
             List<Event> events = eventRepository.findAllByName(q);
+            List<EventData> dataList = events.stream()
+                    .map(this::mapObjectToData)
+                    .collect(Collectors.toList());
+
+            events.forEach(this::mapObjectToData);
             return ResponseEntity.ok()
-                    .body(Map.of("status", "success", "data", events));
+                    .body(Map.of("status", "success", "data", dataList));
         }catch (Exception ex){
             throw new PlatformDataIntegrityException("error.msg.search",
                     String.format("An error occurred while searching for the string '%s'", q));
@@ -80,9 +86,11 @@ public class EventReadServiceImpl implements EventReadService{
         EventData data = new EventData();
 
         if(event != null){
+            data.setId(event.getId());
             data.setDate(event.getDate());
             data.setName(event.getName());
             data.setAddress(event.getAddress());
+            data.setEventCode(event.getEventCode());
         }
         return data;
     }

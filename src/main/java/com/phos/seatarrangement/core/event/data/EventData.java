@@ -11,9 +11,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class EventData {
 
+    private Long id;
     private String name;
     private LocalDate date;
     private String address;
+    private String eventCode;
 
 
 }

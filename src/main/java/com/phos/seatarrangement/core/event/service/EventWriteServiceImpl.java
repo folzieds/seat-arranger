@@ -88,19 +88,19 @@ public class EventWriteServiceImpl implements EventWriteService{
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
 
 
-            if(!optionalEvent.isEmpty()){
+            if(optionalEvent.isEmpty()){
                 throw new EventNotFoundException("error.msg.event.not.found",
                         "The event was not found");
             }
             Event event = optionalEvent.get();
 
-            if( data != null  && !data.getName().equals(event.getName())){
+            if( data != null  && data.getName() != null && !data.getName().equals(event.getName())){
                 event.setName(data.getName());
             }
-            if( data != null  && !data.getAddress().equals(event.getAddress())){
+            if( data != null && data.getAddress() != null  && !data.getAddress().equals(event.getAddress())){
                 event.setAddress(data.getAddress());
             }
-            if( data != null  && data.getDate() != event.getDate()){
+            if( data != null && data.getDate() != null && data.getDate() != event.getDate()){
                 event.setDate(data.getDate());
             }
 
@@ -108,7 +108,7 @@ public class EventWriteServiceImpl implements EventWriteService{
             return getEventResponse(event);
         }catch (Exception ex){
             logger.error("An error occurred while updating event...");
-            throw new EventNotFoundException("error.msg.event.not.updated"
+            throw new PlatformDataIntegrityException("error.msg.event.not.updated"
                     ,String.format("The event with event id %d could not be updated...", eventId));
         }
     }
@@ -136,14 +136,14 @@ public class EventWriteServiceImpl implements EventWriteService{
 
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
 
-            if(!optionalEvent.isEmpty()){
+            if(optionalEvent.isEmpty()){
                 throw new EventNotFoundException("error.msg.event.not.deleted"
                         ,String.format("The event with id %d could not be deleted...", eventId));
             }
             Event event = optionalEvent.get();
 
             logger.info("Deleting all guests associated with event -> {}", eventId);
-            guestRepository.deleteAllByEventId(event.getId());
+            guestRepository.deleteAllByEvent(event);
 
             eventRepository.delete(event);
             logger.info("Event with id {} has been deleted", eventId);
@@ -151,7 +151,7 @@ public class EventWriteServiceImpl implements EventWriteService{
             return event;
         }catch (Exception ex){
             logger.error("An error occurred while trying to delete event...");
-            throw new EventNotFoundException("error.msg.event.not.deleted"
+            throw new PlatformDataIntegrityException("error.msg.event.not.deleted"
                     ,String.format("The event with id %d could not be deleted...", eventId));
         }
     }
