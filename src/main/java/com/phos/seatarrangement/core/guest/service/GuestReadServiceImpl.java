@@ -4,6 +4,7 @@ import com.phos.seatarrangement.core.event.domain.Event;
 import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
+import com.phos.seatarrangement.core.guest.data.GuestData;
 import com.phos.seatarrangement.core.guest.domain.Guest;
 import com.phos.seatarrangement.core.guest.repository.GuestRepository;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GuestReadServiceImpl implements GuestReadService{
@@ -63,8 +65,11 @@ public class GuestReadServiceImpl implements GuestReadService{
                 q += "%";
             }
             List<Guest> guests = guestRepository.findAllByEventIdAndName(event.getId(), q);
+            List<GuestData> dataList = guests.stream()
+                                            .map(this::mapObjectToData)
+                                            .collect(Collectors.toList());
             return ResponseEntity.ok()
-                    .body(Map.of("status", "success", "data", guests));
+                    .body(Map.of("status", "success", "data", dataList));
         }catch (Exception ex){
             throw new PlatformDataIntegrityException("error.msg.search",
                     String.format("An error occurred while searching for the string '%s'", q));
@@ -84,12 +89,28 @@ public class GuestReadServiceImpl implements GuestReadService{
 
             Long eventId = event.getId();
             List<Guest> guests = guestRepository.findAllByEventId(eventId);
+            List<GuestData> dataList = guests.stream()
+                    .map(this::mapObjectToData)
+                    .collect(Collectors.toList());
 
             return ResponseEntity.ok()
-                    .body(Map.of("status", "success", "data", guests));
+                    .body(Map.of("status", "success", "data", dataList));
         }catch(Exception ex){
             throw new PlatformDataIntegrityException("error.msg.guest.fetch.all",
                     "An error occurred while retrieving guests");
         }
+    }
+
+    private GuestData mapObjectToData(Guest guest){
+        GuestData data = new GuestData();
+
+        if(guest != null){
+            data.setId(guest.getId());
+            data.setFirstName(guest.getFirstName());
+            data.setLastName(guest.getLastName());
+            data.setTableNumber(guest.getTableNumber());
+        }
+
+        return data;
     }
 }
