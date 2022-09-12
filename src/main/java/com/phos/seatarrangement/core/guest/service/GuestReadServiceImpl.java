@@ -58,11 +58,11 @@ public class GuestReadServiceImpl implements GuestReadService{
                 throw new EventNotFoundException("error.msg.event.not.found",
                         String.format("Event with code %s was not found", eventCode));
             }
-            List<Guest> guests;
+
             if (!exactMatch) {
                 q += "%";
             }
-            guests = guestRepository.findAllByEventIdAndName(event.getId(), q);
+            List<Guest> guests = guestRepository.findAllByEventIdAndName(event.getId(), q);
             return ResponseEntity.ok()
                     .body(Map.of("status", "success", "data", guests));
         }catch (Exception ex){

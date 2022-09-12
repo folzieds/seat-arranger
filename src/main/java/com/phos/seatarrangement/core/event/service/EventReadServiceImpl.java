@@ -4,6 +4,7 @@ import com.phos.seatarrangement.core.event.data.EventData;
 import com.phos.seatarrangement.core.event.domain.Event;
 import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
+import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,21 @@ public class EventReadServiceImpl implements EventReadService{
         }catch (Exception ex){
             logger.error("An error occurred while fetching all events...");
             throw new EventNotFoundException("","",ex);
+        }
+    }
+
+    @Override
+    public ResponseEntity search( String q, Boolean exactMatch) {
+        try{
+            if (!exactMatch) {
+                q += "%";
+            }
+            List<Event> events = eventRepository.findAllByName(q);
+            return ResponseEntity.ok()
+                    .body(Map.of("status", "success", "data", events));
+        }catch (Exception ex){
+            throw new PlatformDataIntegrityException("error.msg.search",
+                    String.format("An error occurred while searching for the string '%s'", q));
         }
     }
 
