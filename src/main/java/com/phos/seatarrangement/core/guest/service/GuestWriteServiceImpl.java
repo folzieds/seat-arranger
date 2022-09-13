@@ -1,6 +1,7 @@
 package com.phos.seatarrangement.core.guest.service;
 
 import com.phos.seatarrangement.core.event.domain.Event;
+import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
 import com.phos.seatarrangement.core.guest.data.GuestData;
@@ -23,13 +24,11 @@ public class GuestWriteServiceImpl implements GuestWriteService{
 
     private final GuestRepository guestRepository;
     private final EventRepository eventRepository;
-    private final GuestReadService guestReadService;
 
     @Autowired
-    public GuestWriteServiceImpl(GuestRepository guestRepository, EventRepository eventRepository, GuestReadService guestReadService) {
+    public GuestWriteServiceImpl(GuestRepository guestRepository, EventRepository eventRepository) {
         this.guestRepository = guestRepository;
         this.eventRepository = eventRepository;
-        this.guestReadService = guestReadService;
     }
 
     @Override
@@ -68,7 +67,7 @@ public class GuestWriteServiceImpl implements GuestWriteService{
     public ResponseEntity<Map<String, Object>> update(String eventCode, Long guestId, GuestData data) {
         try{
             validateData(data);
-            Guest guest = guestReadService.retrieveOne(guestId, eventCode);
+            Guest guest = retrieveGuest(guestId, eventCode);
             if( data != null  && !data.getFirstName().equals(guest.getFirstName())){
                 guest.setFirstName(data.getFirstName());
             }
@@ -98,7 +97,7 @@ public class GuestWriteServiceImpl implements GuestWriteService{
 
     private void delete(String eventCode, Long guestId){
         try{
-            Guest guest = guestReadService.retrieveOne(guestId, eventCode);
+            Guest guest = retrieveGuest(guestId, eventCode);
             guestRepository.delete(guest);
 
             logger.info("Guest with id {} has been successfully deleted", guestId);
@@ -107,6 +106,20 @@ public class GuestWriteServiceImpl implements GuestWriteService{
             throw new PlatformDataIntegrityException("error.msg.delete.one",
                     String.format("An error occurred while deleting guest %d from event with code %s", guestId, eventCode));
         }
+    }
+
+    private Guest retrieveGuest(Long guestId, String eventCode){
+
+        logger.info("Fetching event associated to guest... ");
+        Event event = eventRepository.findByEventCode(eventCode);
+
+        if(event == null){
+            throw new EventNotFoundException("error.msg.","");
+        }
+
+        Guest guest = guestRepository.findByIdAndEventId(guestId, event.getId());
+
+        return guest;
     }
 
     @Override
