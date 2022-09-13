@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface GuestRepository extends JpaRepository<Guest, Long>, JpaSpecificationExecutor<Guest> {
 
-    void deleteAllByEvent(Event event);
+    void deleteByEvent(Event event);
 
     Guest findByIdAndEventId(Long guestId, Long eventId);
 

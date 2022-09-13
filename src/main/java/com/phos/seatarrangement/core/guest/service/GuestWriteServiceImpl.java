@@ -127,7 +127,7 @@ public class GuestWriteServiceImpl implements GuestWriteService{
         try{
             Event event = eventRepository.findByEventCode(eventCode);
             if(event != null){
-                guestRepository.deleteAllByEvent(event);
+                guestRepository.deleteByEvent(event);
             }
             return ResponseEntity.ok()
                     .body(Map.of("status", "Success"));
