@@ -7,6 +7,7 @@ import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
 import com.phos.seatarrangement.core.guest.data.GuestData;
 import com.phos.seatarrangement.core.guest.data.GuestResponseData;
 import com.phos.seatarrangement.core.guest.domain.Guest;
+import com.phos.seatarrangement.core.guest.exception.GuestNotFoundException;
 import com.phos.seatarrangement.core.guest.repository.GuestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class GuestWriteServiceImpl implements GuestWriteService{
@@ -36,7 +38,13 @@ public class GuestWriteServiceImpl implements GuestWriteService{
         try{
             validateData(guestData);
             logger.info("Fetching event with code {}", eventCode);
-            Event event = eventRepository.findByEventCode(eventCode);
+            Optional<Event> optionalEvent = eventRepository.findByEventCode(eventCode);
+
+            if(optionalEvent.isEmpty()){
+                throw new EventNotFoundException("error.msg.event.not.found",
+                        "The event was not found");
+            }
+            Event event = optionalEvent.get();
 
             String firstName = guestData.getFirstName();
             String lastName = guestData.getLastName();
@@ -111,13 +119,21 @@ public class GuestWriteServiceImpl implements GuestWriteService{
     private Guest retrieveGuest(Long guestId, String eventCode){
 
         logger.info("Fetching event associated to guest... ");
-        Event event = eventRepository.findByEventCode(eventCode);
+        Optional<Event> optionalEvent = eventRepository.findByEventCode(eventCode);
 
-        if(event == null){
-            throw new EventNotFoundException("error.msg.","");
+        if(optionalEvent.isEmpty()){
+            throw new EventNotFoundException("error.msg.event.not.found",
+                    "The event was not found");
         }
+        Event event = optionalEvent.get();
 
-        Guest guest = guestRepository.findByIdAndEventId(guestId, event.getId());
+        Optional<Guest> optionalGuest = guestRepository.findByIdAndEventId(guestId, event.getId());
+
+        if(optionalGuest.isEmpty()){
+            throw new GuestNotFoundException("error.msg.guest.not.found",
+                    String.format("The guest with event code %s and id %d was not found",eventCode, guestId));
+        }
+        Guest guest = optionalGuest.get();
 
         return guest;
     }
@@ -125,10 +141,14 @@ public class GuestWriteServiceImpl implements GuestWriteService{
     @Override
     public ResponseEntity<Map<String, Object>> deleteAll(String eventCode) {
         try{
-            Event event = eventRepository.findByEventCode(eventCode);
-            if(event != null){
-                guestRepository.deleteByEvent(event);
+            Optional<Event> optionalEvent = eventRepository.findByEventCode(eventCode);
+            if(optionalEvent.isEmpty()){
+                throw new EventNotFoundException("error.msg.event.not.found",
+                        "The event was not found");
             }
+            Event event = optionalEvent.get();
+            List<Guest> guests = guestRepository.findAllByEventId(event.getId());
+            guestRepository.deleteAll(guests);
             return ResponseEntity.ok()
                     .body(Map.of("status", "Success"));
         }catch (Exception ex){

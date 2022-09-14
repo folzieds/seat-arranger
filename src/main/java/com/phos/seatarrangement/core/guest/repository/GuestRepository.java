@@ -1,6 +1,5 @@
 package com.phos.seatarrangement.core.guest.repository;
 
-import com.phos.seatarrangement.core.event.domain.Event;
 import com.phos.seatarrangement.core.guest.domain.Guest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -8,12 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GuestRepository extends JpaRepository<Guest, Long>, JpaSpecificationExecutor<Guest> {
 
-    void deleteByEvent(Event event);
-
-    Guest findByIdAndEventId(Long guestId, Long eventId);
+    Optional<Guest> findByIdAndEventId(Long guestId, Long eventId);
 
     List<Guest> findAllByEventId(Long eventId);
 

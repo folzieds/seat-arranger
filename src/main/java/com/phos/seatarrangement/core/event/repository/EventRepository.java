@@ -7,10 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
 
-    Event findByEventCode(String eventCode);
+    Optional<Event> findByEventCode(String eventCode);
 
     @Query(value = "select * from m_event where name like :q", nativeQuery = true)
     List<Event> findAllByName(@Param("q") String q);

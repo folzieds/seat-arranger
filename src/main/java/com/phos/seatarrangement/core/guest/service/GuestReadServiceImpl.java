@@ -6,6 +6,7 @@ import com.phos.seatarrangement.core.event.repository.EventRepository;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
 import com.phos.seatarrangement.core.guest.data.GuestData;
 import com.phos.seatarrangement.core.guest.domain.Guest;
+import com.phos.seatarrangement.core.guest.exception.GuestNotFoundException;
 import com.phos.seatarrangement.core.guest.repository.GuestRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,16 +36,24 @@ public class GuestReadServiceImpl implements GuestReadService{
     @Override
     public GuestData retrieveOne(Long guestId, String eventCode){
         try{
-            logger.info("Fetching event with code {}", eventCode);
-            Event event = eventRepository.findByEventCode(eventCode);
+            logger.info("Fetching guest with event code {}", eventCode);
+            Optional<Event> optionalEvent = eventRepository.findByEventCode(eventCode);
 
-            if(event == null){
+            if(optionalEvent.isEmpty()){
                 throw new EventNotFoundException("error.msg.event.not.found",
                         String.format("The event with code %s was not found", eventCode));
             }
 
+            Event event = optionalEvent.get();
             Long eventId = event.getId();
-            Guest guest = guestRepository.findByIdAndEventId(guestId, eventId);
+            Optional<Guest> optionalGuest = guestRepository.findByIdAndEventId(guestId, eventId);
+
+            if(optionalGuest.isEmpty()){
+                throw new GuestNotFoundException("error.msg.guest.not.found",
+                        String.format("Guest with event code %s and id %d not found",eventCode, guestId));
+            }
+
+            Guest guest = optionalGuest.get();
 
             return mapObjectToData(guest);
         }catch(Exception ex){
@@ -55,12 +65,14 @@ public class GuestReadServiceImpl implements GuestReadService{
     @Override
     public ResponseEntity search(String eventCode, String q, Boolean exactMatch) {
         try{
-            Event event = eventRepository.findByEventCode(eventCode);
-            if(event == null){
+            Optional<Event> optionalEvent = eventRepository.findByEventCode(eventCode);
+
+            if(optionalEvent.isEmpty()){
                 throw new EventNotFoundException("error.msg.event.not.found",
                         String.format("Event with code %s was not found", eventCode));
             }
 
+            Event event = optionalEvent.get();
             if (!exactMatch) {
                 q += "%";
             }
@@ -79,14 +91,15 @@ public class GuestReadServiceImpl implements GuestReadService{
     @Override
     public ResponseEntity retrieveAll(String eventCode) {
         try{
-            logger.info("Fetching event with code {}", eventCode);
-            Event event = eventRepository.findByEventCode(eventCode);
+            logger.info("Fetching all guests with event code {}", eventCode);
+            Optional<Event> optionalEvent = eventRepository.findByEventCode(eventCode);
 
-            if(event == null){
+            if(optionalEvent.isEmpty()){
                 throw new EventNotFoundException("error.msg.event.not.found",
                         String.format("The event with code %s was not found", eventCode));
             }
 
+            Event event = optionalEvent.get();
             Long eventId = event.getId();
             List<Guest> guests = guestRepository.findAllByEventId(eventId);
             List<GuestData> dataList = guests.stream()

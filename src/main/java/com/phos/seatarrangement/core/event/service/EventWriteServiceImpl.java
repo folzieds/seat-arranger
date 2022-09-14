@@ -6,6 +6,7 @@ import com.phos.seatarrangement.core.event.domain.Event;
 import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
+import com.phos.seatarrangement.core.guest.domain.Guest;
 import com.phos.seatarrangement.core.guest.repository.GuestRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -137,13 +138,14 @@ public class EventWriteServiceImpl implements EventWriteService{
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
 
             if(optionalEvent.isEmpty()){
-                throw new EventNotFoundException("error.msg.event.not.deleted"
-                        ,String.format("The event with id %d could not be deleted...", eventId));
+                throw new EventNotFoundException("error.msg.event.not.found"
+                        ,String.format("The event with id %d could not be found...", eventId));
             }
             Event event = optionalEvent.get();
 
             logger.info("Deleting all guests associated with event -> {}", eventId);
-            guestRepository.deleteAllByEvent(event);
+            List<Guest> guests = guestRepository.findAllByEventId(event.getId());
+            guestRepository.deleteAll(guests);
 
             eventRepository.delete(event);
             logger.info("Event with id {} has been deleted", eventId);
