@@ -14,21 +14,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public PlatformDataIntegrityException handlePlatformDataIntegrityException(PlatformDataIntegrityException ex){
-        return ex;
+    public GlobalErrorResponse handlePlatformDataIntegrityException(PlatformDataIntegrityException ex){
+        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
     }
 
     @ExceptionHandler(GuestNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public GuestNotFoundException handleGuestNotFoundException(GuestNotFoundException ex){
-        return ex;
+    public GlobalErrorResponse handleGuestNotFoundException(GuestNotFoundException ex){
+        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
     }
 
     @ExceptionHandler(EventNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public EventNotFoundException handleEventNotFoundException(EventNotFoundException ex){
-        return ex;
+    public GlobalErrorResponse handleEventNotFoundException(EventNotFoundException ex){
+        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
     }
 }
