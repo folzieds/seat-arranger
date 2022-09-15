@@ -65,12 +65,16 @@ public class DocumentProcessingServiceImpl implements DocumentProcessingService{
                     continue;
                 }
 
-                String firstName = row.getCell(1).getStringCellValue();
-                String lastName = row.getCell(2).getStringCellValue();
-                String tableNumber = row.getCell(3).getStringCellValue();
+                String firstName = row.getCell(0).getStringCellValue();
+                String lastName = row.getCell(1).getStringCellValue();
+                Double number = row.getCell(2).getNumericCellValue();
 
-                Guest guest = Guest.build(firstName,lastName,tableNumber,event);
-                guests.add(guest);
+                String tableNumber = String.valueOf(number.intValue());
+
+                if(!firstName.isEmpty() && !lastName.isEmpty()){
+                    Guest guest = Guest.build(firstName,lastName,tableNumber,event);
+                    guests.add(guest);
+                }
             }
 
             guestRepository.saveAll(guests);
@@ -79,7 +83,7 @@ public class DocumentProcessingServiceImpl implements DocumentProcessingService{
                     .body(Map.of("status","done",
                             "count",guests.size(),
                             "message","The file has been processed successfully"));
-        }catch(IOException ex){
+        }catch(IOException | IllegalStateException ex){
             throw new PlatformDataIntegrityException("error.msg.upload.document",
                     "An error occurred while processing the document.");
         }
