@@ -1,5 +1,6 @@
 package com.phos.seatarrangement.core.exception;
 
+import com.phos.seatarrangement.core.document.exception.DocumentNotFoundException;
 import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.guest.exception.GuestNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public GlobalErrorResponse handleEventNotFoundException(EventNotFoundException ex){
+        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
+    }
+
+    @ExceptionHandler(DocumentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public GlobalErrorResponse handleDocumentNotFoundException(DocumentNotFoundException ex){
         return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
     }
 }
