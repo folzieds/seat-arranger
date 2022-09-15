@@ -21,8 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -91,7 +89,7 @@ public class DocumentProcessingServiceImpl implements DocumentProcessingService{
     public ResponseEntity downloadTemplate(String eventCode) {
         try {
 
-            File file = new File("resources/samples/template.xlsx");
+            File file = new File("samples/template.xlsx");
             String absolutePath = file.getAbsolutePath();
             Path path = Paths.get( absolutePath);
             Resource resource = new UrlResource(path.toUri());
