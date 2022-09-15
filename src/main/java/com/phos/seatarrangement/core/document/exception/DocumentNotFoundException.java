@@ -4,11 +4,11 @@ import com.phos.seatarrangement.core.exception.AbstractPlatformException;
 
 public class DocumentNotFoundException extends AbstractPlatformException {
 
-    protected DocumentNotFoundException(String defaultGlobalCode, String defaultUserMessage) {
+    public DocumentNotFoundException(String defaultGlobalCode, String defaultUserMessage) {
         super(defaultGlobalCode, defaultUserMessage);
     }
 
-    protected DocumentNotFoundException(Throwable cause, String defaultGlobalCode, String defaultUserMessage) {
+    public DocumentNotFoundException(Throwable cause, String defaultGlobalCode, String defaultUserMessage) {
         super(cause, defaultGlobalCode, defaultUserMessage);
     }
 }

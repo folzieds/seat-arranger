@@ -1,5 +1,6 @@
 package com.phos.seatarrangement.core.document.service;
 
+import com.phos.seatarrangement.core.document.exception.DocumentNotFoundException;
 import com.phos.seatarrangement.core.event.domain.Event;
 import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.event.repository.EventRepository;
@@ -10,11 +11,20 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Service
@@ -35,8 +45,6 @@ public class DocumentProcessingServiceImpl implements DocumentProcessingService{
             XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
 
             XSSFSheet sheet = workbook.getSheetAt(0);
-
-            int noOfColumns = sheet.getRow(0).getPhysicalNumberOfCells();
 
             Iterator<Row> rows = sheet.rowIterator();
 
@@ -81,7 +89,24 @@ public class DocumentProcessingServiceImpl implements DocumentProcessingService{
 
     @Override
     public ResponseEntity downloadTemplate(String eventCode) {
-        return null;
+        try {
+
+            File file = new File("resources/samples/template.xlsx");
+            String absolutePath = file.getAbsolutePath();
+            Path path = Paths.get( absolutePath);
+            Resource resource = new UrlResource(path.toUri());
+            if(!resource.exists() || !resource.isReadable()) {
+                throw new DocumentNotFoundException("error.msg.document.not.found",
+                        "The template file could not be found");
+            }
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (MalformedURLException e) {
+            throw new PlatformDataIntegrityException("error.msg.document.process",
+                    "An error occurred while fetching the template file.");
+        }
     }
 
 
