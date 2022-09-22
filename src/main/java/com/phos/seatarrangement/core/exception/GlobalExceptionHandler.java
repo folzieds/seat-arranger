@@ -3,6 +3,9 @@ package com.phos.seatarrangement.core.exception;
 import com.phos.seatarrangement.core.document.exception.DocumentNotFoundException;
 import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.core.guest.exception.GuestNotFoundException;
+import com.phos.seatarrangement.core.useradministration.exception.UnAuthenticatedUserException;
+import com.phos.seatarrangement.core.useradministration.exception.UserNotFoundException;
+import com.phos.seatarrangement.core.useradministration.exception.UsernameAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,6 +40,27 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public GlobalErrorResponse handleDocumentNotFoundException(DocumentNotFoundException ex){
+        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public GlobalErrorResponse handleUserNotFoundException(UserNotFoundException ex){
+        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public GlobalErrorResponse handleUsernameAlreadyExistsException(UsernameAlreadyExistException ex){
+        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
+    }
+
+    @ExceptionHandler(UnAuthenticatedUserException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public GlobalErrorResponse handleUnauthenticatedUserException(UnAuthenticatedUserException ex){
         return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
     }
 }
