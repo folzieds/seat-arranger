@@ -15,13 +15,13 @@ public class JwtUtil {
     @Value("${seats.jwt.secret.key}")
     private String secretKey;
 
-    @Value("${seats.jwt.key.duration}")
+    @Value("${seats.jwt.key.duration:86400000}")
     private Long jwtDuration;
 
     public String generateAccessToken(AppUser appUser){
         return Jwts.builder()
-                .setSubject("")
-                .setIssuer("")
+                .setSubject(String.format("%s,%s", appUser.getId(), appUser.getUsername()))
+                .setIssuer("Phos")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtDuration))
                 .signWith(SignatureAlgorithm.ES512, secretKey)
