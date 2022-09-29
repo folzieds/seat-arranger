@@ -30,6 +30,7 @@ public class UserApiResource {
 
     @GetMapping("{id}")
     public ResponseEntity<AppUserData> fetchUser(@PathVariable("id")Long appUserId){
+         appUserReadService.fetchUser(appUserId);
         return null;
     }
 
