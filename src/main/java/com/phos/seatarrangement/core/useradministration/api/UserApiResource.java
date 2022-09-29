@@ -30,8 +30,7 @@ public class UserApiResource {
 
     @GetMapping("{id}")
     public ResponseEntity<AppUserData> fetchUser(@PathVariable("id")Long appUserId){
-         appUserReadService.fetchUser(appUserId);
-        return null;
+        return appUserReadService.fetchUser(appUserId);
     }
 
     @PutMapping("id")
@@ -41,7 +40,7 @@ public class UserApiResource {
 
     @GetMapping ("all")
     public ResponseEntity<Collection<AppUserData>> fetchAllUsers(){
-        return null;
+        return appUserReadService.fetchAllUsers();
     }
 
     @DeleteMapping("{id}")
