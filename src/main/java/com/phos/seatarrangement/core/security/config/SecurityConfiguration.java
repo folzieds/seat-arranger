@@ -19,7 +19,10 @@ public class SecurityConfiguration {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic();
+                .httpBasic()
+                .and()
+                .passwordManagement((management) -> management
+                        .changePasswordPage("/update-password"));
 
         return http.build();
     }
