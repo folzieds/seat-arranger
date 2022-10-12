@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Data
@@ -21,15 +21,15 @@ public class AppUser implements UserDetails {
 
     private String firstname;
 
-    private String password;
-
-    private LocalDate createdAt;
-
-    private LocalDate lastLogin;
-
     private String lastname;
 
+    private String password;
+
     private String email;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime lastLogin;
 
     private Boolean isActive;
 
