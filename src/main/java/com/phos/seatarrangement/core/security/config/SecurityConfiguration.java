@@ -45,6 +45,8 @@ public class SecurityConfiguration {
     @Bean
     public JdbcUserDetailsManager users(DataSource dataSource){
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+
+        System.out.println(passwordEncoder().encode("phosadmin"));
         return jdbcUserDetailsManager;
     }
 
