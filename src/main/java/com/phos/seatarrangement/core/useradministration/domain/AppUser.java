@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Set;
 
 @Data
 @Table(name = "m_appuser")
@@ -32,6 +33,10 @@ public class AppUser implements UserDetails {
     private LocalDateTime lastLogin;
 
     private Boolean isActive;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "m_appuser_role", joinColumns = @JoinColumn(name = "appuser_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -1,25 +1,3 @@
--- Drop all tables if exists
-SET foreign_key_checks = 0;
-
--- drop accounting subsystem
-DROP TABLE IF EXISTS `m_appuser`;
-DROP TABLE IF EXISTS `m_role`;
-DROP TABLE IF EXISTS `m_appuser_role`;
-
--- Creating schema for the core database
-CREATE TABLE m_appuser (
-     id BIGINT NOT NULL AUTO_INCREMENT,
-     username varchar(100) NOT NULL,
-     firstname varchar(100),
-     lastname varchar(100),
-     password varchar(255) NOT NULL,
-     email varchar(100),
-     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-     last_login DATETIME,
-     is_active TINYINT NOT NULL DEFAULT 0,
-     PRIMARY KEY (`id`),
-     UNIQUE KEY `username_org` (`username`)
-);
 
 -- inserting default user to the table
 insert into m_appuser
