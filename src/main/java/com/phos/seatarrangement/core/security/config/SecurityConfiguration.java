@@ -18,30 +18,6 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-    @Value("${phos.datasource.url}")
-    private String url;
-
-    @Value("${phos.datasource.username}")
-    private String username;
-
-    @Value("${phos.datasource.password}")
-    private String password;
-
-    @Value("${phos.datasource.driver-class-name}")
-    private String driver;
-
-    @Bean
-    public DataSource datasource(){
-        DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-
-        dataSourceBuilder.driverClassName(driver);
-        dataSourceBuilder.url(url);
-        dataSourceBuilder.username(username);
-        dataSourceBuilder.password(password);
-
-        return dataSourceBuilder.build();
-    }
-
     @Bean
     public JdbcUserDetailsManager users(DataSource dataSource){
         JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
