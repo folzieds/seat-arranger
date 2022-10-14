@@ -1,8 +1,8 @@
 -- inserting default user to the table
 insert into m_appuser
-(username, firstname, lastname, password, email, is_active)
+(username, firstname, lastname, password, email, is_active, created_at)
 values
-('superuser', 'phos', 'admin', '$2a$10$dqX8Jog/uSD0yvBRXEa1eOdvcXkhPAfy8l4Mx6Vb6aSp4hH5Mryi2','superuser@phos.com', 1);
+('superuser', 'phos', 'admin', '$2a$10$dqX8Jog/uSD0yvBRXEa1eOdvcXkhPAfy8l4Mx6Vb6aSp4hH5Mryi2','superuser@phos.com', 1, current_timestamp);
 
 -- Add default roles
 insert into m_role
