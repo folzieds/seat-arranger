@@ -1,12 +1,12 @@
 package com.phos.seatarrangement.core.document.service;
 
 import com.phos.seatarrangement.core.document.exception.DocumentNotFoundException;
-import com.phos.seatarrangement.core.event.domain.Event;
-import com.phos.seatarrangement.core.event.exception.EventNotFoundException;
-import com.phos.seatarrangement.core.event.repository.EventRepository;
+import com.phos.seatarrangement.event.domain.Event;
+import com.phos.seatarrangement.event.exception.EventNotFoundException;
+import com.phos.seatarrangement.event.repository.EventRepository;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
-import com.phos.seatarrangement.core.guest.domain.Guest;
-import com.phos.seatarrangement.core.guest.repository.GuestRepository;
+import com.phos.seatarrangement.guest.domain.Guest;
+import com.phos.seatarrangement.guest.repository.GuestRepository;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
