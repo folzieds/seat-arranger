@@ -1,4 +1,4 @@
-package com.phos.seatarrangement.core.document.exception;
+package com.phos.seatarrangement.document.exception;
 
 import com.phos.seatarrangement.core.exception.AbstractPlatformException;
 

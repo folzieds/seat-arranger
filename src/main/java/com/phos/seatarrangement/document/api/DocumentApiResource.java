@@ -1,6 +1,6 @@
-package com.phos.seatarrangement.core.document.api;
+package com.phos.seatarrangement.document.api;
 
-import com.phos.seatarrangement.core.document.service.DocumentProcessingService;
+import com.phos.seatarrangement.document.service.DocumentProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,6 +1,6 @@
 package com.phos.seatarrangement.core.exception;
 
-import com.phos.seatarrangement.core.document.exception.DocumentNotFoundException;
+import com.phos.seatarrangement.document.exception.DocumentNotFoundException;
 import com.phos.seatarrangement.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.guest.exception.GuestNotFoundException;
 import com.phos.seatarrangement.core.useradministration.exception.UnAuthenticatedUserException;

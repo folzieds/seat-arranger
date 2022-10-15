@@ -1,4 +1,4 @@
-package com.phos.seatarrangement.core.document.service;
+package com.phos.seatarrangement.document.service;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;

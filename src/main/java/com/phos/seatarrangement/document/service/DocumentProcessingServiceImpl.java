@@ -1,6 +1,6 @@
-package com.phos.seatarrangement.core.document.service;
+package com.phos.seatarrangement.document.service;
 
-import com.phos.seatarrangement.core.document.exception.DocumentNotFoundException;
+import com.phos.seatarrangement.document.exception.DocumentNotFoundException;
 import com.phos.seatarrangement.event.domain.Event;
 import com.phos.seatarrangement.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.event.repository.EventRepository;
