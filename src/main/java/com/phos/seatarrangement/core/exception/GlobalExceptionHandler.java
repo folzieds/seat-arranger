@@ -7,6 +7,7 @@ import com.phos.seatarrangement.core.useradministration.exception.UnAuthenticate
 import com.phos.seatarrangement.core.useradministration.exception.UserNotFoundException;
 import com.phos.seatarrangement.core.useradministration.exception.UsernameAlreadyExistException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -48,6 +49,13 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public GlobalErrorResponse handleUserNotFoundException(UserNotFoundException ex){
         return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public GlobalErrorResponse handleUsernameNotFoundException(UsernameNotFoundException ex){
+        return new GlobalErrorResponse(ex.getLocalizedMessage(), ex.getMessage());
     }
 
     @ExceptionHandler(UsernameAlreadyExistException.class)
