@@ -1,7 +1,6 @@
 package com.phos.seatarrangement.core.security.config;
 
 import com.phos.seatarrangement.core.security.service.JPAUserDetailsService;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -12,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 
@@ -20,9 +21,16 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
    private final UserDetailsService userDetailsService;
+   private final RsaKeyProperties rsaKeyProperties;
 
-    public SecurityConfiguration(JPAUserDetailsService userDetailsService) {
+    public SecurityConfiguration(JPAUserDetailsService userDetailsService, RsaKeyProperties rsaKeyProperties) {
         this.userDetailsService = userDetailsService;
+        this.rsaKeyProperties = rsaKeyProperties;
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder(){
+        return NimbusJwtDecoder.withPublicKey(rsaKeyProperties.getRsaPublicKey()).build();
     }
 
     @Bean
