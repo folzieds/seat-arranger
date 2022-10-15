@@ -6,6 +6,7 @@ import com.phos.seatarrangement.core.useradministration.service.AppUserReadServi
 import com.phos.seatarrangement.core.useradministration.service.AppUserWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -46,6 +47,11 @@ public class UserApiResource {
     @DeleteMapping("{id}")
     public ResponseEntity<AppUserResponseData> delete(@PathVariable("id")Long appUserId){
         return null;
+    }
+
+    @PostMapping("oauth/token")
+    public ResponseEntity token(Authentication authentication){
+        return appUserReadService.getToken(authentication);
     }
 
 }
