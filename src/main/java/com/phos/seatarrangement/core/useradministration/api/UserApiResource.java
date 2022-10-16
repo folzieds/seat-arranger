@@ -2,6 +2,7 @@ package com.phos.seatarrangement.core.useradministration.api;
 
 import com.phos.seatarrangement.core.useradministration.data.AppUserData;
 import com.phos.seatarrangement.core.useradministration.data.AppUserResponseData;
+import com.phos.seatarrangement.core.useradministration.data.TokenRequestData;
 import com.phos.seatarrangement.core.useradministration.service.AppUserReadService;
 import com.phos.seatarrangement.core.useradministration.service.AppUserWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,9 @@ public class UserApiResource {
     }
 
     @PostMapping("oauth/token")
-    public ResponseEntity token(Authentication authentication){
-        return appUserReadService.getToken(authentication);
+    public ResponseEntity token(@RequestBody TokenRequestData data){
+
+        return appUserReadService.getToken(data);
     }
 
 }

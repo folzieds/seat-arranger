@@ -1,6 +1,7 @@
 package com.phos.seatarrangement.core.useradministration.service;
 
 import com.phos.seatarrangement.core.useradministration.data.AppUserData;
+import com.phos.seatarrangement.core.useradministration.data.TokenRequestData;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
@@ -12,5 +13,5 @@ public interface AppUserReadService {
 
     ResponseEntity<Collection<AppUserData>> fetchAllUsers();
 
-    ResponseEntity getToken(Authentication authentication);
+    ResponseEntity getToken(TokenRequestData data);
 }

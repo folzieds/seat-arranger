@@ -9,6 +9,9 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.phos.seatarrangement.core.security.service.JPAUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,6 +40,15 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    public AuthenticationManager authManager(){
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+
+        return new ProviderManager(authProvider);
+
+    }
+
+    @Bean
     public JwtDecoder jwtDecoder(){
         return NimbusJwtDecoder.withPublicKey(rsaKeyProperties.getRsaPublicKey()).build();
     }
@@ -59,7 +71,6 @@ public class SecurityConfiguration {
                 .userDetailsService(userDetailsService)
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 
