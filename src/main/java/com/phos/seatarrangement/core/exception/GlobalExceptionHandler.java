@@ -19,6 +19,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
+    public GlobalErrorResponse handleGlobalException(PlatformDataIntegrityException ex){
+        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
+    }
+
+    @ExceptionHandler(PlatformDataIntegrityException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
     public GlobalErrorResponse handlePlatformDataIntegrityException(PlatformDataIntegrityException ex){
         return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
     }

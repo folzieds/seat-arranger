@@ -66,6 +66,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(auth -> {
                     auth.mvcMatchers("/").permitAll();
+                    auth.mvcMatchers("/users/oauth/token").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .userDetailsService(userDetailsService)

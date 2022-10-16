@@ -7,7 +7,6 @@ import com.phos.seatarrangement.core.useradministration.service.AppUserReadServi
 import com.phos.seatarrangement.core.useradministration.service.AppUserWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
