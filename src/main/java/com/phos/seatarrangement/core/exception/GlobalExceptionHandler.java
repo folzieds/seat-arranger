@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public GlobalErrorResponse handleGlobalException(PlatformDataIntegrityException ex){
-        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
+    public GlobalErrorResponse handleGlobalException(Exception ex){
+        String localizedMessage = ex.getLocalizedMessage().split(":")[0];
+        String message = ex.getMessage().split(":")[0];
+        return new GlobalErrorResponse(localizedMessage, message);
     }
 
     @ExceptionHandler(PlatformDataIntegrityException.class)
