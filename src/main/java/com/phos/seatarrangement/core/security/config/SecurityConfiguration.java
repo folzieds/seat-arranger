@@ -40,9 +40,10 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authManager(){
+    public AuthenticationManager authManager(PasswordEncoder encoder){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(encoder);
 
         return new ProviderManager(authProvider);
 
