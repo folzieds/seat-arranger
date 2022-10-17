@@ -25,8 +25,13 @@ public class UserApiResource {
     }
 
     @PostMapping("")
-    public ResponseEntity<AppUserResponseData> create(){
+    public ResponseEntity<AppUserResponseData> create(@RequestBody AppUserData appUserData){
         return null;
+    }
+
+    @GetMapping("confirm-username")
+    public ResponseEntity<Boolean> confirmUsername(@RequestParam String username){
+        return appUserReadService.confirmUsername(username);
     }
 
     @GetMapping("{id}")

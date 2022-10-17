@@ -1,9 +1,12 @@
 package com.phos.seatarrangement.core.useradministration.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
 import com.phos.seatarrangement.core.security.service.JwtTokenService;
 import com.phos.seatarrangement.core.useradministration.data.AppUserData;
 import com.phos.seatarrangement.core.useradministration.data.TokenRequestData;
+import com.phos.seatarrangement.core.useradministration.domain.AppUser;
+import com.phos.seatarrangement.core.useradministration.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +14,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
+import org.springframework.ui.ModelMap;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AppUserReadServiceImpl implements AppUserReadService{
@@ -23,10 +29,12 @@ public class AppUserReadServiceImpl implements AppUserReadService{
 
     private final JwtTokenService tokenService;
     private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
 
-    public AppUserReadServiceImpl(JwtTokenService tokenService, AuthenticationManager authenticationManager) {
+    public AppUserReadServiceImpl(JwtTokenService tokenService, AuthenticationManager authenticationManager, UserRepository userRepository) {
         this.tokenService = tokenService;
         this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -36,6 +44,14 @@ public class AppUserReadServiceImpl implements AppUserReadService{
 
     @Override
     public ResponseEntity<Collection<AppUserData>> fetchAllUsers() {
+        List<AppUser> users = userRepository.findAll();
+
+//        List<AppUserData> userDatas = users.stream()
+//                .map()
+//                .collect(Collectors.toList());
+
+//        return ResponseEntity.ok()
+//                .body(userDatas);
         return null;
     }
 
@@ -48,6 +64,17 @@ public class AppUserReadServiceImpl implements AppUserReadService{
 
         return ResponseEntity.ok()
                 .body(Map.of("status", "Success","token",token));
+    }
+
+    @Override
+    public ResponseEntity<Boolean> confirmUsername(String username) {
+        Optional<AppUser> user = userRepository.findByUsername(username);
+        if(user.isPresent()){
+            return ResponseEntity.ok()
+                    .body(true);
+        }
+        return ResponseEntity.ok()
+                .body(false);
     }
 
     private void validateLoginRequest(TokenRequestData data) {

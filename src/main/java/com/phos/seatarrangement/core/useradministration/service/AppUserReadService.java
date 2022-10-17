@@ -14,4 +14,6 @@ public interface AppUserReadService {
     ResponseEntity<Collection<AppUserData>> fetchAllUsers();
 
     ResponseEntity getToken(TokenRequestData data);
+
+    ResponseEntity<Boolean> confirmUsername(String username);
 }
