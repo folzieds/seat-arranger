@@ -6,6 +6,7 @@ import com.phos.seatarrangement.core.security.service.JwtTokenService;
 import com.phos.seatarrangement.core.useradministration.data.AppUserData;
 import com.phos.seatarrangement.core.useradministration.data.TokenRequestData;
 import com.phos.seatarrangement.core.useradministration.domain.AppUser;
+import com.phos.seatarrangement.core.useradministration.exception.UserNotFoundException;
 import com.phos.seatarrangement.core.useradministration.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 
 import java.util.Collection;
 import java.util.List;
@@ -38,8 +38,21 @@ public class AppUserReadServiceImpl implements AppUserReadService{
     }
 
     @Override
-    public ResponseEntity<AppUserData> fetchUser(Long appUserId) {
-        return null;
+    public ResponseEntity fetchUser(Long appUserId) {
+        Optional<AppUser> appUser = userRepository.findById(appUserId);
+
+
+        if(appUser.isPresent()){
+            AppUserData appUserData = mapUserToData(appUser.get());
+            return ResponseEntity.ok()
+                    .body(Map.of("status", "Success", "data", appUserData));
+        }
+        throw new UserNotFoundException("error.user.not.found",
+                String.format("user with id %d not found", appUserId));
+    }
+
+    private AppUserData mapUserToData(AppUser appUser) {
+
     }
 
     @Override
