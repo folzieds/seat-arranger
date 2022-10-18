@@ -39,8 +39,8 @@ public class AppUserReadServiceImpl implements AppUserReadService{
 
     @Override
     public ResponseEntity fetchUser(Long appUserId) {
+        logger.info("fetching user with id {}", appUserId);
         Optional<AppUser> appUser = userRepository.findById(appUserId);
-
 
         if(appUser.isPresent()){
             AppUserData appUserData = mapUserToData(appUser.get());
@@ -52,11 +52,13 @@ public class AppUserReadServiceImpl implements AppUserReadService{
     }
 
     private AppUserData mapUserToData(AppUser appUser) {
+        logger.info("Mapping user to data...");
         return AppUserData.build(appUser.getUsername(), appUser.getFirstname(), appUser.getLastname(), appUser.getEmail());
     }
 
     @Override
     public ResponseEntity<Collection<AppUserData>> fetchAllUsers() {
+        logger.info("Fetching all users...");
         List<AppUser> users = userRepository.findAll();
 
         List<AppUserData> userDatas = users.stream()
@@ -69,7 +71,7 @@ public class AppUserReadServiceImpl implements AppUserReadService{
 
     @Override
     public ResponseEntity getToken(TokenRequestData data) {
-
+        logger.info("generating token...");
         validateLoginRequest(data);
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(data.getUsername(), data.getPassword()));
         String token = tokenService.generateToken(authentication);
@@ -80,6 +82,7 @@ public class AppUserReadServiceImpl implements AppUserReadService{
 
     @Override
     public ResponseEntity<Boolean> confirmUsername(String username) {
+        logger.info("confirming username...");
         Optional<AppUser> user = userRepository.findByUsername(username);
         if(user.isPresent()){
             return ResponseEntity.ok()
@@ -90,6 +93,7 @@ public class AppUserReadServiceImpl implements AppUserReadService{
     }
 
     private void validateLoginRequest(TokenRequestData data) {
+        logger.info("Validating login request...");
         if(data == null){
             throw new PlatformDataIntegrityException("error.username.and.password.blank", "username and password must not be blank");
         }
