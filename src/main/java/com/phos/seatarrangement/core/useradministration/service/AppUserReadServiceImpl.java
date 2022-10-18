@@ -52,20 +52,19 @@ public class AppUserReadServiceImpl implements AppUserReadService{
     }
 
     private AppUserData mapUserToData(AppUser appUser) {
-
+        return AppUserData.build(appUser.getUsername(), appUser.getFirstname(), appUser.getLastname(), appUser.getEmail());
     }
 
     @Override
     public ResponseEntity<Collection<AppUserData>> fetchAllUsers() {
         List<AppUser> users = userRepository.findAll();
 
-//        List<AppUserData> userDatas = users.stream()
-//                .map()
-//                .collect(Collectors.toList());
+        List<AppUserData> userDatas = users.stream()
+                .map(this::mapUserToData)
+                .collect(Collectors.toList());
 
-//        return ResponseEntity.ok()
-//                .body(userDatas);
-        return null;
+        return ResponseEntity.ok()
+                .body(userDatas);
     }
 
     @Override
