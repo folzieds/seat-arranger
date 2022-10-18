@@ -1,5 +1,7 @@
 package com.phos.seatarrangement.event.service;
 
+import com.phos.seatarrangement.core.useradministration.domain.AppUser;
+import com.phos.seatarrangement.core.useradministration.service.AppUserReadService;
 import com.phos.seatarrangement.event.data.EventData;
 import com.phos.seatarrangement.event.data.EventResponseData;
 import com.phos.seatarrangement.event.domain.Event;
@@ -29,10 +31,13 @@ public class EventWriteServiceImpl implements EventWriteService{
 
     private final GuestRepository guestRepository;
 
+    private final AppUserReadService appUserReadService;
+
     @Autowired
-    public EventWriteServiceImpl(EventRepository eventRepository, GuestRepository guestRepository) {
+    public EventWriteServiceImpl(EventRepository eventRepository, GuestRepository guestRepository, AppUserReadService appUserReadService) {
         this.eventRepository = eventRepository;
         this.guestRepository = guestRepository;
+        this.appUserReadService = appUserReadService;
     }
 
     @Override
@@ -48,7 +53,9 @@ public class EventWriteServiceImpl implements EventWriteService{
             String address = data.getAddress();
             LocalDate date = data.getDate();
 
-            Event event =  eventRepository.save(Event.build(name, address, date, eventCode));
+            AppUser user = appUserReadService.getCurrentUser();
+
+            Event event =  eventRepository.save(Event.build(name, address, date, eventCode, user));
 
             logger.info("{} event has been created", name);
             return getEventResponse(event);
@@ -115,7 +122,7 @@ public class EventWriteServiceImpl implements EventWriteService{
     }
 
     private void validateData(EventData data) {
-
+        //Todo: Validate event data
     }
 
     @Override
@@ -126,7 +133,7 @@ public class EventWriteServiceImpl implements EventWriteService{
 
     @Override
     public ResponseEntity deleteAll() {
-        // refactor when you add users
+        // TODO: refactor delete all events when you add users
         eventRepository.deleteAll();
         return ResponseEntity.ok()
                 .body(Map.of("status", "Success"));

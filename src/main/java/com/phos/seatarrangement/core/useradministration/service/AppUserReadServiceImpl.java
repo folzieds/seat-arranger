@@ -2,6 +2,7 @@ package com.phos.seatarrangement.core.useradministration.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.phos.seatarrangement.core.exception.PlatformDataIntegrityException;
+import com.phos.seatarrangement.core.security.domain.SecurityUser;
 import com.phos.seatarrangement.core.security.service.JwtTokenService;
 import com.phos.seatarrangement.core.useradministration.data.AppUserData;
 import com.phos.seatarrangement.core.useradministration.data.TokenRequestData;
@@ -14,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -105,5 +109,24 @@ public class AppUserReadServiceImpl implements AppUserReadService{
         if(data.getPassword() == null || data.getPassword().isEmpty()){
             throw new PlatformDataIntegrityException("error.password.blank","password must not be blank");
         }
+    }
+
+    @Override
+    public AppUser getCurrentUser(){
+        logger.info("fetching current logged in user...");
+        Object principal = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        if(principal instanceof UserDetails){
+            String username = ((SecurityUser) principal).getUsername();
+            Optional<AppUser> appUser = userRepository.findByUsername(username);
+
+            if(appUser.isPresent()){
+                return appUser.get();
+            }
+        }
+
+        return null;
     }
 }
