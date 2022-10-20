@@ -133,7 +133,7 @@ public class EventWriteServiceImpl implements EventWriteService{
 
     @Override
     public ResponseEntity deleteAll() {
-        // TODO: refactor delete all events when you add users
+        // Todo: refactor delete all events when you add users
         eventRepository.deleteAll();
         return ResponseEntity.ok()
                 .body(Map.of("status", "Success"));
