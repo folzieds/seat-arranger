@@ -1,12 +1,9 @@
 package com.phos.seatarrangement.core.useradministration.domain;
 
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Set;
 
 @Data
@@ -38,4 +35,20 @@ public class AppUser {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "m_appuser_role", joinColumns = @JoinColumn(name = "appuser_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
+
+    private AppUser(String username, String firstname, String lastname, String password, String email) {
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.password = password;
+        this.email = email;
+    }
+
+    public AppUser() {
+
+    }
+
+    public static AppUser build(String username, String firstname, String lastname, String password, String email){
+        return new AppUser(username, firstname, lastname, password, email);
+    }
 }
