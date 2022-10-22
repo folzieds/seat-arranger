@@ -10,7 +10,7 @@ public interface AppUserWriteService {
 
     ResponseEntity<AppUserResponseData> activate(Long userId);
 
-    ResponseEntity<AppUserResponseData> update(AppUserData data);
+    ResponseEntity<AppUserResponseData> update(Long userId, AppUserData data);
 
     ResponseEntity<AppUserResponseData> delete(Long appUserId);
 }

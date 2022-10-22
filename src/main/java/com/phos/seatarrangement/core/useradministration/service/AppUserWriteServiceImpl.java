@@ -3,9 +3,10 @@ package com.phos.seatarrangement.core.useradministration.service;
 import com.phos.seatarrangement.core.useradministration.data.AppUserData;
 import com.phos.seatarrangement.core.useradministration.data.AppUserResponseData;
 import com.phos.seatarrangement.core.useradministration.domain.AppUser;
-import com.phos.seatarrangement.core.useradministration.domain.Role;
 import com.phos.seatarrangement.core.useradministration.exception.UserNotFoundException;
 import com.phos.seatarrangement.core.useradministration.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import java.util.Optional;
 
 @Service
 public class AppUserWriteServiceImpl implements AppUserWriteService{
+
+    private final Logger logger = LoggerFactory.getLogger(AppUserWriteServiceImpl.class);
 
     private final UserRepository userRepository;
 
@@ -71,8 +74,26 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
     }
 
     @Override
-    public ResponseEntity<AppUserResponseData> update(AppUserData data) {
-        return null;
+    public ResponseEntity<AppUserResponseData> update(Long userId, AppUserData data) {
+        validateForUpdate(data);
+        logger.info("Fetching user with id {}", userId);
+        Optional<AppUser> optionalAppUser = userRepository.findById(userId);
+
+        if(optionalAppUser.isEmpty()){
+            throw new UserNotFoundException("error.user.not.found",
+                    String.format("The user with id %d was not found", userId));
+        }
+
+        AppUser user = optionalAppUser.get();
+        // perform update
+        AppUserResponseData response = getAppUserResponse(user);
+
+        return ResponseEntity.ok()
+                .body(response);
+    }
+
+    private void validateForUpdate(AppUserData data) {
+
     }
 
     @Override
