@@ -35,11 +35,6 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
         String password = passwordEncoder.encode(data.getPassword());
 
         AppUser user = AppUser.build(username, firstname, lastname, password, email);
-        // Add user role to new user
-        // set roles on activate
-
-//        Role role = fetchRoleForUser();
-//        user.setRoles();
 
         user = userRepository.saveAndFlush(user);
 
