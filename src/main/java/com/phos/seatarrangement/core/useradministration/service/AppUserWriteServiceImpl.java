@@ -76,15 +76,7 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
     @Override
     public ResponseEntity<AppUserResponseData> update(Long userId, AppUserData data) {
         validateForUpdate(data);
-        logger.info("Fetching user with id {}", userId);
-        Optional<AppUser> optionalAppUser = userRepository.findById(userId);
-
-        if(optionalAppUser.isEmpty()){
-            throw new UserNotFoundException("error.user.not.found",
-                    String.format("The user with id %d was not found", userId));
-        }
-
-        AppUser user = optionalAppUser.get();
+        AppUser user = fetchUser(userId);
         // perform update
         AppUserResponseData response = getAppUserResponse(user);
 
@@ -96,8 +88,31 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
 
     }
 
+    private AppUser fetchUser(Long userId){
+
+        logger.info("Fetching user with id {}", userId);
+        Optional<AppUser> optionalAppUser = userRepository.findById(userId);
+
+        if(optionalAppUser.isEmpty()){
+            throw new UserNotFoundException("error.user.not.found",
+                    String.format("The user with id %d was not found", userId));
+        }
+
+        return optionalAppUser.get();
+    }
+
     @Override
     public ResponseEntity<AppUserResponseData> delete(Long appUserId) {
-        return null;
+
+        AppUser user = fetchUser(appUserId);
+        // delete all events associated with user
+        // remove all roles
+        logger.info("deleting user with id {}", appUserId);
+        userRepository.delete(user);
+
+        AppUserResponseData response =  getAppUserResponse(user);
+
+        return ResponseEntity.ok()
+                .body(response);
     }
 }
