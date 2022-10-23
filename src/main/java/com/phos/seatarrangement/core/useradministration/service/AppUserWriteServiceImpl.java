@@ -50,17 +50,6 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
         String password = passwordEncoder.encode(data.getPassword());
 
         AppUser user = AppUser.build(username, firstname, lastname, password, email);
-        logger.info("Adding default role");
-
-        Optional<Role> optionalRole = roleRepository.findByName("User");
-
-        if(optionalRole.isEmpty())
-            throw new RoleNotFoundException("error.role.not.found", "The User role was not found");
-
-        Set<Role> roles =  new HashSet<>();
-
-        roles.add(optionalRole.get());
-        user.setRoles(roles);
 
         user = userRepository.saveAndFlush(user);
 
@@ -79,6 +68,17 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
         }
         AppUser user = optionalUser.get();
 
+        logger.info("Adding default role");
+
+        Optional<Role> optionalRole = roleRepository.findByName("User");
+
+        if(optionalRole.isEmpty())
+            throw new RoleNotFoundException("error.role.not.found", "The User role was not found");
+
+        Set<Role> roles =  new HashSet<>();
+
+        roles.add(optionalRole.get());
+        user.setRoles(roles);
         user.setIsActive(true);
 
         userRepository.saveAndFlush(user);
