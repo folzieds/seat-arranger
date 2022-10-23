@@ -32,16 +32,19 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
 
     private final PasswordEncoder passwordEncoder;
 
-    public AppUserWriteServiceImpl(UserRepository userRepository, EventRepository eventRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    private final UserDataValidator userDataValidator;
+
+    public AppUserWriteServiceImpl(UserRepository userRepository, EventRepository eventRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, UserDataValidator userDataValidator) {
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userDataValidator = userDataValidator;
     }
 
     @Override
     public ResponseEntity<AppUserResponseData> create(AppUserData data) {
-        validateForCreate(data);
+        userDataValidator.validateForCreate(data);
 
         String username = data.getUsername();
         String firstname = data.getFirstname();
@@ -92,13 +95,11 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
         return new AppUserResponseData(user.getUsername(),user.getId());
     }
 
-    private void validateForCreate(AppUserData data) {
 
-    }
 
     @Override
     public ResponseEntity<AppUserResponseData> update(Long userId, AppUserData data) {
-        validateForUpdate(data);
+        userDataValidator.validateForUpdate(data);
         AppUser user = fetchUser(userId);
         // perform update
         AppUserResponseData response = getAppUserResponse(user);
@@ -107,9 +108,7 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
                 .body(response);
     }
 
-    private void validateForUpdate(AppUserData data) {
 
-    }
 
     private AppUser fetchUser(Long userId){
 
