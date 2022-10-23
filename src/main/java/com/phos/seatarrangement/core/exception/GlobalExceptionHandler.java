@@ -1,5 +1,6 @@
 package com.phos.seatarrangement.core.exception;
 
+import com.phos.seatarrangement.core.useradministration.exception.RoleNotFoundException;
 import com.phos.seatarrangement.document.exception.DocumentNotFoundException;
 import com.phos.seatarrangement.event.exception.EventNotFoundException;
 import com.phos.seatarrangement.guest.exception.GuestNotFoundException;
@@ -78,6 +79,13 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public GlobalErrorResponse handleUnauthenticatedUserException(UnAuthenticatedUserException ex){
+        return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
+    }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public GlobalErrorResponse handleRoleNotFoundException(RoleNotFoundException ex){
         return new GlobalErrorResponse(ex.getDefaultGlobalCode(), ex.getDefaultUserMessage());
     }
 }

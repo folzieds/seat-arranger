@@ -3,7 +3,10 @@ package com.phos.seatarrangement.core.useradministration.service;
 import com.phos.seatarrangement.core.useradministration.data.AppUserData;
 import com.phos.seatarrangement.core.useradministration.data.AppUserResponseData;
 import com.phos.seatarrangement.core.useradministration.domain.AppUser;
+import com.phos.seatarrangement.core.useradministration.domain.Role;
+import com.phos.seatarrangement.core.useradministration.exception.RoleNotFoundException;
 import com.phos.seatarrangement.core.useradministration.exception.UserNotFoundException;
+import com.phos.seatarrangement.core.useradministration.repository.RoleRepository;
 import com.phos.seatarrangement.core.useradministration.repository.UserRepository;
 import com.phos.seatarrangement.event.repository.EventRepository;
 import org.slf4j.Logger;
@@ -12,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class AppUserWriteServiceImpl implements AppUserWriteService{
@@ -23,11 +28,14 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
 
     private final EventRepository eventRepository;
 
+    private final RoleRepository roleRepository;
+
     private final PasswordEncoder passwordEncoder;
 
-    public AppUserWriteServiceImpl(UserRepository userRepository, EventRepository eventRepository, PasswordEncoder passwordEncoder) {
+    public AppUserWriteServiceImpl(UserRepository userRepository, EventRepository eventRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -42,6 +50,17 @@ public class AppUserWriteServiceImpl implements AppUserWriteService{
         String password = passwordEncoder.encode(data.getPassword());
 
         AppUser user = AppUser.build(username, firstname, lastname, password, email);
+        logger.info("Adding default role");
+
+        Optional<Role> optionalRole = roleRepository.findByName("User");
+
+        if(optionalRole.isEmpty())
+            throw new RoleNotFoundException("error.role.not.found", "The User role was not found");
+
+        Set<Role> roles =  new HashSet<>();
+
+        roles.add(optionalRole.get());
+        user.setRoles(roles);
 
         user = userRepository.saveAndFlush(user);
 
