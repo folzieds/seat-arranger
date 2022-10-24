@@ -95,7 +95,7 @@ public class EventWriteServiceImpl implements EventWriteService{
     @Override
     public ResponseEntity<EventResponseData> update(EventData data, Long eventId) {
         try{
-            validateData(data);
+            eventDataValidator.validateData(data);
             Optional<Event> optionalEvent = eventRepository.findById(eventId);
 
 
