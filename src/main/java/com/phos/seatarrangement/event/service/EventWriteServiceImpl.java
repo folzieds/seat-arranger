@@ -33,17 +33,20 @@ public class EventWriteServiceImpl implements EventWriteService{
 
     private final AppUserReadService appUserReadService;
 
+    private final EventDataValidator eventDataValidator;
+
     @Autowired
-    public EventWriteServiceImpl(EventRepository eventRepository, GuestRepository guestRepository, AppUserReadService appUserReadService) {
+    public EventWriteServiceImpl(EventRepository eventRepository, GuestRepository guestRepository, AppUserReadService appUserReadService, EventDataValidator eventDataValidator) {
         this.eventRepository = eventRepository;
         this.guestRepository = guestRepository;
         this.appUserReadService = appUserReadService;
+        this.eventDataValidator = eventDataValidator;
     }
 
     @Override
     public ResponseEntity<EventResponseData> create(EventData data) {
         try{
-            validateData(data);
+            eventDataValidator.validateData(data);
             List<String> codes = eventRepository.findAllCodes();
             String eventCode = getRandomString();
             while(!isUnique(eventCode, codes)){
@@ -121,9 +124,7 @@ public class EventWriteServiceImpl implements EventWriteService{
         }
     }
 
-    private void validateData(EventData data) {
-        //Todo: Validate event data
-    }
+
 
     @Override
     public ResponseEntity<EventResponseData> deleteEvent(Long eventId) {
